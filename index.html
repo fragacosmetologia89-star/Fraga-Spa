@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraga Spa | Tracker Financiero Premium</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Configuración del color Dorado Corporativo -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        gold: {
+                            50: '#fcfaf5',
+                            100: '#f8f4eb',
+                            200: '#f0e4cd',
+                            300: '#e5cdab',
+                            400: '#d7b07e',
+                            500: '#cb9658',
+                            600: '#be7e44',
+                            700: '#9e6239',
+                            800: '#815135',
+                            900: '#68432d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #fcfcfc; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        
+        /* Ocultar flechas numéricas */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+        
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-gray-800 min-h-screen p-4 md:p-8 selection:bg-gold-200 selection:text-black">
+
+    <div class="max-w-5xl mx-auto space-y-6">
+        
+        <!-- Header Premium -->
+        <header class="bg-black text-white rounded-2xl p-6 md:p-8 shadow-2xl flex flex-col md:flex-row justify-between items-center gap-6 relative overflow-hidden border-b-4 border-gold-500">
+            <!-- Destello dorado decorativo -->
+            <div class="absolute top-0 right-0 w-72 h-72 bg-gold-500 opacity-10 rounded-full -translate-y-1/2 translate-x-1/3 blur-3xl pointer-events-none"></div>
+            
+            <div class="relative z-10 text-center md:text-left">
+                <h1 class="text-4xl md:text-5xl font-serif font-bold text-gold-400 tracking-wide">Fraga Spa</h1>
+                <p class="text-gray-400 text-sm mt-2 font-light tracking-[0.2em] uppercase">Control Financiero & Run Rate</p>
+            </div>
+            <div class="flex flex-col md:flex-row gap-4 w-full md:w-auto relative z-10">
+                <div class="bg-gray-900/80 p-3 rounded-xl border border-gray-800 w-full md:w-auto backdrop-blur-md">
+                    <label class="block text-xs text-gold-500 mb-1 uppercase font-semibold tracking-widest">Mes a Evaluar</label>
+                    <input type="month" id="monthSelect" class="w-full bg-transparent text-white font-serif text-lg focus:outline-none cursor-pointer">
+                </div>
+                <div class="bg-gray-900/80 p-3 rounded-xl border border-gray-800 w-full md:w-auto backdrop-blur-md">
+                    <label class="block text-xs text-gold-500 mb-1 uppercase font-semibold tracking-widest">Semana Actual</label>
+                    <select id="currentWeekSelect" class="w-full bg-transparent text-white font-serif text-lg focus:outline-none cursor-pointer">
+                        <option value="1" class="text-black">Semana 1</option>
+                        <option value="2" class="text-black">Semana 2</option>
+                        <option value="3" class="text-black">Semana 3</option>
+                        <option value="4" class="text-black">Semana 4</option>
+                    </select>
+                </div>
+            </div>
+        </header>
+
+        <!-- Configuración de Meta -->
+        <section class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-200 relative overflow-hidden">
+            <div class="flex flex-col md:flex-row gap-8 items-center">
+                <div class="flex-1 w-full">
+                    <label class="block text-sm text-gray-500 font-bold mb-3 uppercase tracking-widest">Meta de Facturación Mensual</label>
+                    <div class="relative group">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gold-500 font-serif text-3xl group-focus-within:text-gold-600 transition-colors">$</span>
+                        <input type="number" id="monthlyGoal" placeholder="Ej: 59000000" 
+                               class="w-full bg-gray-50/50 border-b-2 border-gray-200 text-3xl md:text-4xl font-serif text-black py-4 pl-12 pr-4 focus:bg-white focus:border-gold-500 transition-all outline-none">
+                    </div>
+                </div>
+                <div class="bg-black p-6 rounded-2xl border border-gray-800 min-w-[280px] w-full md:w-auto text-center flex flex-col justify-center relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-gold-900/20 to-transparent"></div>
+                    <p class="text-xs text-gold-500 font-bold uppercase tracking-widest relative z-10">Meta Base por Semana</p>
+                    <p id="weeklyTargetDisplay" class="text-3xl font-serif text-white mt-2 relative z-10">$0</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ingresos por Semana -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Semanas 1 a 4 con estilo refinado -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 focus-within:border-gold-400 focus-within:shadow-md transition-all group">
+                <label class="block text-xs text-gray-400 font-bold mb-3 uppercase tracking-widest group-focus-within:text-gold-600 transition-colors">Ingresos Sem. 1</label>
+                <div class="relative">
+                    <span class="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400 font-serif text-xl group-focus-within:text-gold-500 transition-colors">$</span>
+                    <input type="number" id="week1" class="week-input w-full bg-transparent text-xl font-serif text-black py-2 pl-6 focus:outline-none transition-all border-b border-transparent focus:border-gold-300" placeholder="0">
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 focus-within:border-gold-400 focus-within:shadow-md transition-all group">
+                <label class="block text-xs text-gray-400 font-bold mb-3 uppercase tracking-widest group-focus-within:text-gold-600 transition-colors">Ingresos Sem. 2</label>
+                <div class="relative">
+                    <span class="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400 font-serif text-xl group-focus-within:text-gold-500 transition-colors">$</span>
+                    <input type="number" id="week2" class="week-input w-full bg-transparent text-xl font-serif text-black py-2 pl-6 focus:outline-none transition-all border-b border-transparent focus:border-gold-300" placeholder="0">
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 focus-within:border-gold-400 focus-within:shadow-md transition-all group">
+                <label class="block text-xs text-gray-400 font-bold mb-3 uppercase tracking-widest group-focus-within:text-gold-600 transition-colors">Ingresos Sem. 3</label>
+                <div class="relative">
+                    <span class="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400 font-serif text-xl group-focus-within:text-gold-500 transition-colors">$</span>
+                    <input type="number" id="week3" class="week-input w-full bg-transparent text-xl font-serif text-black py-2 pl-6 focus:outline-none transition-all border-b border-transparent focus:border-gold-300" placeholder="0">
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 focus-within:border-gold-400 focus-within:shadow-md transition-all group">
+                <label class="block text-xs text-gray-400 font-bold mb-3 uppercase tracking-widest group-focus-within:text-gold-600 transition-colors">Ingresos Sem. 4</label>
+                <div class="relative">
+                    <span class="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400 font-serif text-xl group-focus-within:text-gold-500 transition-colors">$</span>
+                    <input type="number" id="week4" class="week-input w-full bg-transparent text-xl font-serif text-black py-2 pl-6 focus:outline-none transition-all border-b border-transparent focus:border-gold-300" placeholder="0">
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard de Resultados -->
+        <section class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-200 space-y-8">
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- MTD Acumulado -->
+                <div class="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
+                    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">Total Acumulado (MTD)</p>
+                    <p id="mtdDisplay" class="text-4xl font-serif text-black mt-3">$0</p>
+                    <p id="percentDisplay" class="text-xs text-gold-700 mt-3 font-semibold uppercase tracking-wider bg-gold-50 border border-gold-100 inline-block px-3 py-1 rounded-lg">0% de la meta</p>
+                </div>
+
+                <!-- Lo que falta -->
+                <div class="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
+                    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">Faltante Mensual</p>
+                    <p id="remainingDisplay" class="text-4xl font-serif text-gray-400 mt-3">$0</p>
+                </div>
+
+                <!-- Estado vs Semana Actual -->
+                <div id="statusCard" class="rounded-2xl p-6 border transition-all duration-300 transform flex flex-col justify-center">
+                    <p id="statusLabel" class="text-xs font-bold uppercase tracking-widest"></p>
+                    <p id="statusAmount" class="text-3xl font-serif mt-2"></p>
+                    <p id="statusContext" class="text-xs mt-3 font-medium uppercase tracking-wider opacity-70"></p>
+                </div>
+            </div>
+
+            <!-- Recálculo Dinámico de Semanas Restantes (Estrategia) -->
+            <div id="dynamicCard" class="hidden border border-gray-200 rounded-2xl overflow-hidden fade-in bg-white">
+                <div class="bg-gray-50 border-b border-gray-200 px-6 py-4 flex items-center gap-3">
+                    <div class="w-2 h-2 rounded-full bg-gold-500"></div>
+                    <p class="text-sm text-black font-bold uppercase tracking-widest">
+                        Estrategia Operativa: <span id="remWeeksDisplay" class="text-gold-600">0</span> Semanas Restantes
+                    </p>
+                </div>
+                <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6 relative">
+                    <!-- Flechas conectoras visuales (solo desktop) -->
+                    <div class="hidden md:block absolute top-1/2 left-1/3 -translate-y-1/2 -translate-x-3 text-gray-300">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    </div>
+                    <div class="hidden md:block absolute top-1/2 left-2/3 -translate-y-1/2 -translate-x-3 text-gray-300">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                    </div>
+
+                    <!-- Cuota base -->
+                    <div class="text-center md:text-left flex flex-col justify-center">
+                        <p class="text-xs text-gray-400 font-bold uppercase tracking-widest">Meta Base (Semanal)</p>
+                        <p id="dynBaseAmount" class="text-2xl font-serif text-black mt-2">$0</p>
+                    </div>
+                    <!-- Distribución de deuda/superávit -->
+                    <div id="dynDebtContainer" class="text-center md:text-left flex flex-col justify-center">
+                        <!-- Inyectado vía JS -->
+                    </div>
+                    <!-- Nueva Meta -->
+                    <div id="dynNewTargetContainer" class="bg-black p-5 rounded-xl text-center md:text-left flex flex-col justify-center shadow-lg ring-1 ring-gold-500/30">
+                        <p id="dynNewTargetLabel" class="text-xs text-gold-500 font-bold uppercase tracking-widest">Nueva Meta Exigida</p>
+                        <p id="dynNewTargetAmount" class="text-2xl font-serif text-white mt-2">$0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Barra de Progreso -->
+            <div class="pt-6">
+                <div class="flex justify-between text-xs font-bold text-gray-400 mb-3 uppercase tracking-widest">
+                    <span>0%</span>
+                    <span id="progressText" class="text-black bg-gold-100 px-3 py-1 rounded-lg border border-gold-200">0%</span>
+                    <span>100%</span>
+                </div>
+                <div class="w-full bg-gray-100 h-3 rounded-full overflow-hidden">
+                    <div id="progressBar" class="bg-gold-500 h-full transition-all duration-700 ease-out relative" style="width: 0%">
+                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full animate-[shimmer_2s_infinite]"></div>
+                    </div>
+                </div>
+                <!-- Marcadores visuales -->
+                <div class="relative w-full h-2 mt-1">
+                    <div class="absolute w-0.5 h-2 bg-gray-300 left-1/4 transform -translate-x-1/2"></div>
+                    <div class="absolute w-0.5 h-2 bg-gray-300 left-2/4 transform -translate-x-1/2"></div>
+                    <div class="absolute w-0.5 h-2 bg-gray-300 left-3/4 transform -translate-x-1/2"></div>
+                </div>
+            </div>
+
+            <!-- Controles de Exportación -->
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 border-t border-gray-100">
+                <button id="exportBtn" class="w-full md:w-auto bg-black hover:bg-gray-900 text-gold-400 text-sm font-bold uppercase tracking-widest py-4 px-8 rounded-xl transition-all shadow-lg flex items-center justify-center gap-3 border border-gold-900/50 hover:border-gold-500">
+                    <svg class="w-5 h-5 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Exportar Historial
+                </button>
+                <button id="resetTriggerBtn" class="text-xs text-gray-400 hover:text-black font-bold tracking-widest uppercase transition-colors py-2 px-4 rounded-lg hover:bg-gray-50">
+                    Limpiar Mes
+                </button>
+            </div>
+        </section>
+
+        <!-- Modal de Confirmación Elegante -->
+        <div id="confirmModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center fade-in">
+            <div class="bg-white rounded-2xl p-8 max-w-sm w-full shadow-2xl mx-4 text-center border-t-4 border-black">
+                <h3 class="text-2xl font-serif text-black mb-2">¿Limpiar Datos?</h3>
+                <p class="text-sm text-gray-500 mb-8">Los registros actuales volverán a cero. Asegúrate de haber exportado tu historial primero.</p>
+                <div class="flex gap-3">
+                    <button id="cancelResetBtn" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold uppercase tracking-wider text-xs py-3 rounded-xl transition-colors">Cancelar</button>
+                    <button id="confirmResetBtn" class="flex-1 bg-black hover:bg-gray-900 text-white font-bold uppercase tracking-wider text-xs py-3 rounded-xl transition-colors shadow-lg">Sí, Limpiar</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Referencias al DOM
+        const goalInput = document.getElementById('monthlyGoal');
+        const weekInputs = [
+            document.getElementById('week1'), document.getElementById('week2'),
+            document.getElementById('week3'), document.getElementById('week4')
+        ];
+        const monthSelect = document.getElementById('monthSelect');
+        const currentWeekSelect = document.getElementById('currentWeekSelect');
+        const exportBtn = document.getElementById('exportBtn');
+        
+        // Elementos del Modal
+        const confirmModal = document.getElementById('confirmModal');
+        const resetTriggerBtn = document.getElementById('resetTriggerBtn');
+        const cancelResetBtn = document.getElementById('cancelResetBtn');
+        const confirmResetBtn = document.getElementById('confirmResetBtn');
+
+        const displays = {
+            weeklyTarget: document.getElementById('weeklyTargetDisplay'),
+            mtd: document.getElementById('mtdDisplay'),
+            percent: document.getElementById('percentDisplay'),
+            remaining: document.getElementById('remainingDisplay'),
+            statusCard: document.getElementById('statusCard'),
+            statusLabel: document.getElementById('statusLabel'),
+            statusAmount: document.getElementById('statusAmount'),
+            statusContext: document.getElementById('statusContext'),
+            dynamicCard: document.getElementById('dynamicCard'),
+            remWeeksDisplay: document.getElementById('remWeeksDisplay'),
+            dynBaseAmount: document.getElementById('dynBaseAmount'),
+            dynDebtContainer: document.getElementById('dynDebtContainer'),
+            dynNewTargetContainer: document.getElementById('dynNewTargetContainer'),
+            dynNewTargetLabel: document.getElementById('dynNewTargetLabel'),
+            dynNewTargetAmount: document.getElementById('dynNewTargetAmount'),
+            progressBar: document.getElementById('progressBar'),
+            progressText: document.getElementById('progressText')
+        };
+
+        const formatCOP = (number) => {
+            return new Intl.NumberFormat('es-CO', { 
+                style: 'currency', currency: 'COP', maximumFractionDigits: 0
+            }).format(number);
+        };
+
+        const calculateAndRender = () => {
+            const goal = parseFloat(goalInput.value) || 0;
+            const currentWeek = parseInt(currentWeekSelect.value) || 1;
+            
+            const w1 = parseFloat(weekInputs[0].value) || 0;
+            const w2 = parseFloat(weekInputs[1].value) || 0;
+            const w3 = parseFloat(weekInputs[2].value) || 0;
+            const w4 = parseFloat(weekInputs[3].value) || 0;
+
+            const mtd = w1 + w2 + w3 + w4;
+            const weeklyTarget = goal / 4; 
+            const expectedMtd = weeklyTarget * currentWeek; 
+            const remainingTotal = Math.max(0, goal - mtd); 
+            
+            const statusDiff = mtd - expectedMtd; 
+            const percent = goal > 0 ? Math.min((mtd / goal) * 100, 100).toFixed(1) : 0;
+
+            // Textos Básicos
+            displays.weeklyTarget.innerText = formatCOP(weeklyTarget);
+            displays.mtd.innerText = formatCOP(mtd);
+            displays.percent.innerText = ${percent}% Completado;
+            displays.remaining.innerText = formatCOP(remainingTotal);
+            
+            // Barra de Progreso
+            displays.progressBar.style.width = ${percent}%;
+            displays.progressText.innerText = ${percent}%;
+
+            // Reset Clases Status
+            displays.statusCard.className = 'rounded-2xl p-6 border transition-all duration-300 transform flex flex-col justify-center'; 
+            
+            if (goal === 0) {
+                displays.statusCard.classList.add('bg-gray-50', 'border-gray-200', 'text-gray-400');
+                displays.statusLabel.innerText = "Configura la Meta";
+                displays.statusAmount.innerText = "$0";
+                displays.statusContext.innerText = "Esperando datos...";
+                displays.progressBar.className = 'bg-gray-300 h-full transition-all duration-500 ease-out relative';
+            } else if (statusDiff >= 0) {
+                // SUPERÁVIT (Estética Gold)
+                displays.statusCard.classList.add('bg-gold-50', 'border-gold-200', 'text-gold-900', 'shadow-lg', 'shadow-gold-100');
+                displays.statusLabel.innerText = "A Favor (Superávit)";
+                displays.statusLabel.classList.add('text-gold-700');
+                displays.statusAmount.innerText = "+" + formatCOP(statusDiff);
+                displays.statusContext.innerText = Esperado a Sem ${currentWeek}: ${formatCOP(expectedMtd)};
+                displays.progressBar.className = 'bg-gold-500 h-full transition-all duration-700 ease-out relative';
+            } else {
+                // DEUDA (Estética Black/Dark)
+                displays.statusCard.classList.add('bg-gray-900', 'border-black', 'text-white', 'shadow-xl');
+                displays.statusLabel.innerText = "Déficit Operativo";
+                displays.statusLabel.classList.add('text-gray-400');
+                displays.statusAmount.innerText = formatCOP(statusDiff); 
+                displays.statusContext.innerText = Esperado a Sem ${currentWeek}: ${formatCOP(expectedMtd)};
+                displays.progressBar.className = 'bg-black h-full transition-all duration-700 ease-out relative';
+            }
+
+            const remainingWeeks = 4 - currentWeek;
+            if (goal > 0 && remainingWeeks > 0) {
+                displays.dynamicCard.classList.remove('hidden');
+                displays.remWeeksDisplay.innerText = remainingWeeks;
+                displays.dynBaseAmount.innerText = formatCOP(weeklyTarget);
+                
+                if (statusDiff < 0) {
+                    const debt = Math.abs(statusDiff);
+                    const surcharge = debt / remainingWeeks;
+                    const newTarget = weeklyTarget + surcharge;
+                    
+                    displays.dynDebtContainer.innerHTML = `
+                        <p class="text-xs text-gray-500 font-bold uppercase tracking-widest">Déficit (div. en ${remainingWeeks})</p>
+                        <p class="text-2xl font-serif text-gray-800 mt-2">+$${new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 }).format(surcharge)}</p>
+                    `;
+                    
+                    displays.dynNewTargetAmount.innerText = formatCOP(newTarget);
+                    displays.dynNewTargetLabel.innerText = 'Nueva Meta Exigida';
+                    
+                } else {
+                    const surplus = statusDiff;
+                    const discount = surplus / remainingWeeks;
+                    const newTarget = Math.max(0, weeklyTarget - discount);
+                    
+                    displays.dynDebtContainer.innerHTML = `
+                        <p class="text-xs text-gold-600 font-bold uppercase tracking-widest">Holgura a favor</p>
+                        <p class="text-2xl font-serif text-gold-700 mt-2">-$${new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 }).format(discount)}</p>
+                    `;
+                    
+                    displays.dynNewTargetAmount.innerText = formatCOP(newTarget);
+                    displays.dynNewTargetLabel.innerText = 'Nueva Meta Holgada';
+                }
+            } else {
+                displays.dynamicCard.classList.add('hidden');
+            }
+
+            saveData();
+        };
+
+        const saveData = () => {
+            const data = {
+                month: monthSelect.value, goal: goalInput.value,
+                week1: weekInputs[0].value, week2: weekInputs[1].value,
+                week3: weekInputs[2].value, week4: weekInputs[3].value,
+                currentWeek: currentWeekSelect.value
+            };
+            localStorage.setItem('fragaSpaDataV2', JSON.stringify(data));
+        };
+
+        const loadData = () => {
+            const saved = localStorage.getItem('fragaSpaDataV2');
+            const today = new Date();
+            const defaultMonth = ${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')};
+            monthSelect.value = defaultMonth;
+
+            if (saved) {
+                const data = JSON.parse(saved);
+                if(data.month) monthSelect.value = data.month;
+                if(data.goal) goalInput.value = data.goal;
+                if(data.week1) weekInputs[0].value = data.week1;
+                if(data.week2) weekInputs[1].value = data.week2;
+                if(data.week3) weekInputs[2].value = data.week3;
+                if(data.week4) weekInputs[3].value = data.week4;
+                if(data.currentWeek) currentWeekSelect.value = data.currentWeek;
+            }
+            calculateAndRender();
+        };
+
+        // Exportar a Excel
+        exportBtn.addEventListener('click', () => {
+            const goal = parseFloat(goalInput.value) || 0;
+            const w1 = parseFloat(weekInputs[0].value) || 0;
+            const w2 = parseFloat(weekInputs[1].value) || 0;
+            const w3 = parseFloat(weekInputs[2].value) || 0;
+            const w4 = parseFloat(weekInputs[3].value) || 0;
+            const currentWeek = parseInt(currentWeekSelect.value) || 1;
+            const total = w1 + w2 + w3 + w4;
+            const expectedMtd = (goal / 4) * currentWeek;
+            const diff = total - expectedMtd;
+            const month = monthSelect.value;
+
+            let csvContent = "\uFEFF"; 
+            csvContent += "Mes Evaluado;Meta Mensual;Ingresos Semana 1;Ingresos Semana 2;Ingresos Semana 3;Ingresos Semana 4;Total Alcanzado (MTD);Balance (Superavit/Deuda)\n";
+            csvContent += ${month};${goal};${w1};${w2};${w3};${w4};${total};${diff}\n;
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", FragaSpa_Reporte_${month}.csv);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        // Limpiar Datos
+        resetTriggerBtn.addEventListener('click', () => confirmModal.classList.remove('hidden'));
+        cancelResetBtn.addEventListener('click', () => confirmModal.classList.add('hidden'));
+        confirmResetBtn.addEventListener('click', () => {
+            weekInputs.forEach(input => input.value = '');
+            currentWeekSelect.value = '1';
+            confirmModal.classList.add('hidden');
+            calculateAndRender();
+        });
+
+        // Listeners
+        monthSelect.addEventListener('change', calculateAndRender);
+        goalInput.addEventListener('input', calculateAndRender);
+        currentWeekSelect.addEventListener('change', calculateAndRender);
+        
+        weekInputs.forEach((input, index) => {
+            input.addEventListener('input', () => {
+                if (input.value && parseInt(currentWeekSelect.value) < index + 1) {
+                    currentWeekSelect.value = index + 1;
+                }
+                calculateAndRender();
+            });
+        });
+
+        window.addEventListener('load', loadData);
+    </script>
+</body>
+</html>
